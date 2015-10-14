@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE StyleCatalog SYSTEM "styleCatalog.dtd">
+<StyleCatalog>
+	<TransformDefns>
+	</TransformDefns>
+	<Styles>
+		<Style description="Style to render the Geodash3 Visualization" name="Geodash3MojoVisualizationStyle" transform="ReportAjaxMojoVisualizationTransform">
+			<ActualParameters>
+				<ActualParameter name="documentStyle" type="1" value="RWGridJsonStyle" />
+				<ActualParameter name="reportXMLStyle" type="1" value="Geodash3VisualizationMojoDataStyle" />
+				<ActualParameter name="mojoClassName" type="1" value="plugins.Geodash3.Geodash3Vis" />
+			</ActualParameters>
+			<Layouts>
+				<Layout layout_source="AppLayoutSourceFile"><![CDATA[/WEB-INF/xml/layouts/MojoVisualizationLayout.xml]]></Layout>
+			</Layouts>
+		</Style>
+		<Style description="Style for rendering data for Javascript side" name="Geodash3VisualizationMojoDataStyle" transform="MojoVisualizationDataTransform">
+			<ActualParameters>
+				<ActualParameter name="contentType" type="1" value="JSON" />
+				<!-- parameter below is need to get information about currently selected element -->
+				<ActualParameter name="includeGridSelectorCurrentElements" type="4" value="true" />
+			</ActualParameters>
+		</Style>
+	</Styles>
+</StyleCatalog>
