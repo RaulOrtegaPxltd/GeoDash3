@@ -354,6 +354,7 @@ var vis = null;
 			var dp = this.getDataParser();
 			dp = dp || this.getDataInterface();
 
+			debugger;
 			// Transform data from MicroStrategy.
 			for (var i = 0; i < dp.getTotalRows(); i++) {
 				//dp.getRowHeaders(i).getHeader(0).getName();
