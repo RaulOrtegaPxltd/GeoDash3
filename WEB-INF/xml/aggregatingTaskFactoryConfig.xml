@@ -1,0 +1,15 @@
+<!DOCTYPE aggregatingTaskFactory SYSTEM "dtds/aggregatingTaskFactory.dtd">
+<aggregatingTaskFactory>
+  <tasks>
+<!--    <task registerAs="geodashActionClearGeocodingCache" class="com.bdl.mstr.tasks.GeodashActionClearGeocodingCacheTask" />  -->
+<!--    <task registerAs="geodashActionDeleteLayer" class="com.bdl.mstr.tasks.GeodashActionDeleteLayerTask" />  -->
+<!--    <task registerAs="geodashActionGetGeocodingCacheStats" class="com.bdl.mstr.tasks.GeodashActionGetGeocodingCacheStatsTask" />  -->
+<!--    <task registerAs="geodashActionGetLayerColumns" class="com.bdl.mstr.tasks.GeodashActionGetLayerColumnsTask" />  -->
+<!--    <task registerAs="geodashActionGetLayer" class="com.bdl.mstr.tasks.GeodashActionGetLayerTask" />  -->
+<!--    <task registerAs="geodashActionGetSettings" class="com.bdl.mstr.tasks.GeodashActionGetSettingsTask" />  -->
+<!--    <task registerAs="geodashActionGetTile" class="com.bdl.mstr.tasks.GeodashActionGetTileTask" />  -->
+<!--    <task registerAs="geodashActionSaveLayer" class="com.bdl.mstr.tasks.GeodashActionSaveLayerTask" />  -->
+   <task registerAs="geodashActionGetSettings" class="com.pxltd.mstr.tasks.GeodashActionGetSettingsTask" /> 
+   <task registerAs="validateGeodashPrivileges" class="com.pxltd.mstr.tasks.ValidateGeodashPrivilegesTask" /> 
+  </tasks>
+</aggregatingTaskFactory>

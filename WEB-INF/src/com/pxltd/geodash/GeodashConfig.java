@@ -1,6 +1,16 @@
 package com.pxltd.geodash;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ResourceBundle;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.pxltd.geodash.ServiceException.GeoExceptionCodes;
+import com.microstrategy.utils.log.Level;
 
 public class GeodashConfig {
 	private static final String BUNDLE_NAME="resources/geodash";
@@ -58,4 +68,34 @@ public class GeodashConfig {
 		} 
 		return value;
 	}
+	
+	private static boolean hasProxy() throws GeodashException {
+		if(StringUtils.isNotEmpty(GeodashConfig.PROXY_SERVER_ADDRESS) && StringUtils.isNotEmpty(GeodashConfig.PROXY_SERVER_PORT)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public static URLConnection getOpenConnection(URL url) throws GeodashException, ServiceException{
+		try{
+			URLConnection conn;
+			if(hasProxy()){
+				InetSocketAddress addr = new InetSocketAddress(GeodashConfig.PROXY_SERVER_ADDRESS, Integer.parseInt(GeodashConfig.PROXY_SERVER_PORT));
+				Proxy p = new Proxy(Proxy.Type.HTTP, addr);
+				conn = url.openConnection(p);
+			}else{
+				conn = url.openConnection();
+			}
+			conn.setRequestProperty("USER-AGENT", "GEODASH");
+			
+			return conn;
+		}catch(IOException e){
+			Log.logger.logp(Level.SEVERE, "GeoDashConfigImpl", "getOpenConnection",Log.EXCEPTION, e);
+			throw new ServiceException("Error while opening url connection:  " +e.getMessage()+
+					" Attempted URL:  " + url.toString(), 
+					GeoExceptionCodes.COMMUNICATION_ERROR);
+		}
+	}
+
 }

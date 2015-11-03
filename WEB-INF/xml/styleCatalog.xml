@@ -2,6 +2,11 @@
 <!DOCTYPE StyleCatalog SYSTEM "styleCatalog.dtd">
 <StyleCatalog>
 	<TransformDefns>
+		<TransformDefn class="com.bdl.mstr.GeodashAppViewTransform" name="GeodashAppViewTransform" />
+		<TransformDefn class="com.bdl.mstr.GeodashActionTransform" name="GeodashActionTransform" />
+		<TransformDefn class="com.bdl.mstr.GeodashRWAppViewTransform" name="GeodashRWAppViewTransform" />
+		<TransformDefn class="com.bdl.mstr.GeodashRWActionTransform" name="GeodashRWActionTransform" />
+		<TransformDefn class="com.bdl.mstr.GeodashGridTransform" name="GeodashGridTransform" />
 	</TransformDefns>
 	<Styles>
 		<Style description="Style to render the Geodash3 Visualization" name="Geodash3MojoVisualizationStyle" transform="ReportAjaxMojoVisualizationTransform">
@@ -21,5 +26,26 @@
 				<ActualParameter name="includeGridSelectorCurrentElements" type="4" value="true" />
 			</ActualParameters>
 		</Style>
+
+
+
+		<Style description="Renders the main geodash view constructs including css and script files." name="GeodashAppViewStyle" transform="GeodashAppViewTransform">
+			<Layouts>
+				<Layout layout_source="AppLayoutSourceFile"><![CDATA[@Geodash2:/WEB-INF/xml/layouts/GeodashLayout.xml]]></Layout>
+			</Layouts>
+		</Style>
+		<Style description="Responds to geodash action requests." name="GeodashActionStyle" transform="GeodashActionTransform" />
+		<Style description="Generates the geodash app for an RW document." name="GeodashRWAppViewStyle" transform="GeodashRWAppViewTransform">
+			<Layouts>
+				<Layout layout_source="AppLayoutSourceFile"><![CDATA[@Geodash2:/WEB-INF/xml/layouts/GeodashRWLayout.xml]]></Layout>
+			</Layouts>
+		</Style>
+		<Style description="Responds to action requests from a geodash app within an RW document." name="GeodashRWActionStyle" transform="GeodashRWActionTransform" />
+		<Style description="Geodash Grid main display" name="GeodashGridStyle" transform="GeodashGridTransform">
+			<Layouts>
+				<Layout layout_source="AppLayoutSourceFile"><![CDATA[@Geodash2:/WEB-INF/xml/layouts/GeodashGridLayout.xml]]></Layout>
+			</Layouts>
+		</Style>
+
 	</Styles>
 </StyleCatalog>
