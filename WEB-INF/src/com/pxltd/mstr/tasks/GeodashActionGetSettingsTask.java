@@ -18,7 +18,7 @@ public class GeodashActionGetSettingsTask extends AbstractAppTask {
 	@Override
 	public void processRequest(TaskRequestContext context, MarkupOutput out) throws TaskException {
 		checkForRequiredParameters(context.getRequestKeys());
-		WebIServerSession session = context.getWebIServerSession("SessionState", null);
+		WebIServerSession session = context.getWebIServerSession("sessionState", null);
 		try {
 			if (session.isAlive()) {
 				renderSettings(out);
@@ -38,6 +38,8 @@ public class GeodashActionGetSettingsTask extends AbstractAppTask {
 	 */
 	private void renderSettings(MarkupOutput out) throws Exception {
 		JSONObject j = new JSONObject();
+		j.put("version", GeodashConfig.VERSION);
+		j.put("webAPI", GeodashConfig.WEBAPI);
 		j.put("geoDashAPIKey", GeodashConfig.GEODASH_API_KEY);
 		j.put("geoDashLicenseKey", GeodashConfig.GEODASH_LICENSE_KEY);
 		j.put("geoDashGroupID", GeodashConfig.GEODASH_GROUP_ID);
@@ -45,7 +47,7 @@ public class GeodashActionGetSettingsTask extends AbstractAppTask {
 		j.put("googleClientID", GeodashConfig.GOOGLE_CLIENT_ID);
 		j.put("googlePrivateKey", GeodashConfig.GOOGLE_PRIVATE_KEY);
 		j.put("googleRegionBias", GeodashConfig.GOOGLE_REGION_BIAS);
-		j.put("useSSL", GeodashConfig.USE_SSL);
+		j.put("useSSL", Boolean.parseBoolean(GeodashConfig.USE_SSL));
 		j.put("googleAPIKey", GeodashConfig.GOOGLE_API_KEY);
 		j.put("googleIOSKey", GeodashConfig.GOOGLE_IOS_KEY);
 		out.append(j.toString());

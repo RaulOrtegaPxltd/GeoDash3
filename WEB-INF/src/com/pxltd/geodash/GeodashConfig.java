@@ -13,7 +13,8 @@ import com.pxltd.geodash.ServiceException.GeoExceptionCodes;
 import com.microstrategy.utils.log.Level;
 
 public class GeodashConfig {
-	private static final String BUNDLE_NAME="resources/geodash";
+	private static final String BUNDLE_NAME="resources.geodash";
+	public static String VERSION = "VERSION";
 	public static String GEODASH_LICENSE_KEY = "GEODASH_LICENSE_KEY";
 	public static String GEODASH_API_KEY = "GEODASH_API_KEY";
 	public static String GOOGLE_PRIVATE_KEY = "GOOGLE_PRIVATE_KEY";
@@ -38,6 +39,7 @@ public class GeodashConfig {
 
 	static {
 		ResourceBundle config = ResourceBundle.getBundle(BUNDLE_NAME);
+		VERSION = getConfigValue(config, VERSION);
 		GEODASH_LICENSE_KEY = getConfigValue(config, GEODASH_LICENSE_KEY);
 		GEODASH_API_KEY = getConfigValue(config, GEODASH_API_KEY);
 		GOOGLE_PRIVATE_KEY = getConfigValue(config, GOOGLE_PRIVATE_KEY);
@@ -52,13 +54,13 @@ public class GeodashConfig {
 		PROXY_SERVER_PORT = getConfigValue(config, PROXY_SERVER_PORT);
 		REVERSE_PROXY_BASE = getConfigValue(config, REVERSE_PROXY_BASE);
 		INCLUDE_SESSION_STATE = getConfigValue(config, INCLUDE_SESSION_STATE);
-		USE_SSL = getConfigValue(config, USE_SSL);
-		USE_SSL = getConfigValue(config, USE_SSL);
-		USE_SSL = getConfigValue(config, USE_SSL);
-		USE_SSL = getConfigValue(config, USE_SSL);
-		USE_SSL = getConfigValue(config, USE_SSL);
-		USE_SSL = getConfigValue(config, USE_SSL);
-		USE_SSL = getConfigValue(config, USE_SSL);
+		CACHE_GEOCODING = getConfigValue(config, CACHE_GEOCODING);
+		GEOCODE_CACHE_TTL = getConfigValue(config, GEOCODE_CACHE_TTL);
+		GEOCODE_CACHE_MAX_ENTRIES = getConfigValue(config, GEOCODE_CACHE_MAX_ENTRIES);
+		GEODASH_GROUP_ID = getConfigValue(config, GEODASH_GROUP_ID);
+		GEODASH_ADMIN_GROUP_ID = getConfigValue(config, GEODASH_ADMIN_GROUP_ID);
+		WEBAPI = getConfigValue(config, WEBAPI);
+		SHOW_LAYER_NAV = getConfigValue(config, SHOW_LAYER_NAV);
 	}
 
 	private static String getConfigValue(ResourceBundle config, String key) {

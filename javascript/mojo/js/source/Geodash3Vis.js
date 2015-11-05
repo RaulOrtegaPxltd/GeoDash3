@@ -349,7 +349,6 @@ var visName = "Geodash3Vis";
 				// callback to run when
 				// the D3 Visualization API is
 				// loaded.
-				debugger;
 				me.renderGraph();
 			});
 		},
@@ -377,24 +376,23 @@ var visName = "Geodash3Vis";
 			visContainer.style.height = ("" + this.height).indexOf("px") > -1 ? this.height : this.height + "px";
 			visContainer.style.overflow = 'hidden';
 
-			// VISUALIZATION CODE
-			// Call validation task validateGeodashPrivileges passing the sessionState : mstrApp.sessionState
-
-			var renderGeodash = function() {
+			// VISUALIZATION CODE			
+			
+			var renderGeodash = function(gdConfig) {
 //				$(document).ready(function() {
 					// base
 				
 					debugger;
 					var base = 		{
-							'api': 'google',
+							'api': gdConfig.webAPI,
 							'mapType': 0,
-							'version': '2.0.0',
-							'clientID': 'gme-projectxlabsltd',
-							'gdAPIKey': 'AIzaSyDnWbzEK6ztazKoOh2C292439ixcmdkc88',
+							'version': gdConfig.version,
+							'clientID': gdConfig.googleClientID,
+							'gdAPIKey': gdConfig.googleAPIKey,
 							'status': 'ready',
 							'sourceColumns': [],
 							// [{'name':'','type':'attribute','attID':''}{'name':'','type':'metric'}]
-							'isSSL': false,
+							'isSSL': gdConfig.useSSL,
 							'errors':[]
 					};
 
@@ -412,7 +410,11 @@ var visName = "Geodash3Vis";
 					}
 //				});
 			};
-			renderGeodash();
+			
+			//debugger;
+			// Call validation task validateGeodashPrivileges passing the sessionState : mstrApp.sessionState			
+			mstrmojo.xhr.request("POST",mstrConfig.taskURL,{success:renderGeodash,failure:function(){alert("An error ocurred");}},{taskId:"geodash3GetSettings",sessionState:mstrApp.sessionState});
+			
 		},
 		prepareData : function() {
 			var results = [];

@@ -23,13 +23,13 @@ public class ValidateGeodashPrivilegesTask extends AbstractAppTask {
 
 	public ValidateGeodashPrivilegesTask() {
 		super("This task takes care of validating user privilege");
-		addSessionStateParam(false, null);
+		addSessionStateParam(true, null);
 	}
 
 	@Override
 	public void processRequest(TaskRequestContext context, MarkupOutput out) throws TaskException {
 
-		WebIServerSession session = context.getWebIServerSession("SessionState", null);
+		WebIServerSession session = context.getWebIServerSession("sessionState", null);
 		try {
 			WebUser user = ((WebUser) session.getUserInfo());
 			String userObjectId = user._getObKey().toString();
