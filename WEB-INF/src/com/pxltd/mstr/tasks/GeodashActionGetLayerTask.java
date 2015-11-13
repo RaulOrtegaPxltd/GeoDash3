@@ -1,22 +1,20 @@
 package com.pxltd.mstr.tasks;
 
+import com.microstrategy.utils.StringUtils;
 import com.microstrategy.web.app.beans.AppContext;
 import com.microstrategy.web.app.tasks.AbstractAppTask;
 import com.microstrategy.web.app.tasks.AppTaskRequestContext;
 import com.microstrategy.web.app.tasks.architect.json.JSONException;
 import com.microstrategy.web.app.tasks.architect.json.JSONObject;
-import com.microstrategy.web.beans.BeanContext;
-import com.microstrategy.web.beans.BeanFactory;
 import com.microstrategy.web.beans.MarkupOutput;
+import com.microstrategy.web.beans.RWBean;
 import com.microstrategy.web.beans.ReportBean;
 import com.microstrategy.web.beans.ResultSetBean;
 import com.microstrategy.web.beans.ViewBean;
-import com.microstrategy.web.beans.WebBeanException;
 import com.microstrategy.web.objects.WebIServerSession;
 import com.microstrategy.web.tasks.TaskException;
 import com.microstrategy.web.tasks.TaskParameterMetadata;
 import com.microstrategy.web.tasks.TaskRequestContext;
-import com.microstrategy.web.transform.WebTransformException;
 import com.pxltd.geodash.ServiceException;
 import com.pxltd.geodash.layers.AreaLayer;
 import com.pxltd.geodash.layers.DssLayer;
@@ -32,27 +30,35 @@ import com.pxltd.service.mstr.ReportService;
 public class GeodashActionGetLayerTask extends AbstractAppTask {
 	private TaskParameterMetadata layerParam;
 	private TaskParameterMetadata messageIDParam;
-	private TaskParameterMetadata reportIDParam;
+	private TaskParameterMetadata objectIDParam;
+	private TaskParameterMetadata gridKeyParam;
 
 	public GeodashActionGetLayerTask() {
 		super("Geodash task to get layer");
 		addSessionStateParam(true, null);
 		layerParam = addParameterMetadata("layer", "JSON of layer", true, null);
 		messageIDParam = addParameterMetadata("messageID", "The messageID", false, null);
-		reportIDParam = addParameterMetadata("reportID", "The grid key if the messageID references a document instance", false, null);
+		objectIDParam = addParameterMetadata("objectID", "The objectID", false, null);
+		gridKeyParam = addParameterMetadata("gridKey", "The grid key if the messageID references a document instance", false, null);
 	}
 
 	@Override
 	public void processRequest(TaskRequestContext context, MarkupOutput out) throws TaskException {
 		checkForRequiredParameters(context.getRequestKeys());
 		String messageID = messageIDParam.getValue(context.getRequestKeys());
-		String reportID = reportIDParam.getValue(context.getRequestKeys());
+		String reportID = objectIDParam.getValue(context.getRequestKeys());
+		String gridKey = gridKeyParam.getValue(context.getRequestKeys());
 		WebIServerSession session = context.getWebIServerSession("sessionState", null);
 		try {
 			AppContext appContext = ((AppTaskRequestContext) context).getAppContext();
-			ResultSetBean bean = GeodashActionHelper.getReportBean(appContext, session, reportID, messageID);
+			ResultSetBean bean = GeodashActionHelper.getResultSetBean(appContext, session, reportID, messageID, StringUtils.isNotEmpty(gridKey));
 			if (bean != null) {
-				ViewBean viewBean = ((ReportBean) bean).getViewBean();
+				ViewBean viewBean = null;
+				if (StringUtils.isNotEmpty(gridKey)) {
+					viewBean = GeodashActionHelper.getViewBeanByGridKey((RWBean) bean, gridKey);
+				} else {
+					viewBean = ((ReportBean) bean).getViewBean();
+				}
 				if (viewBean != null) {
 					renderGetLayer(context, out, viewBean);
 				} else {
