@@ -22,7 +22,7 @@ public class GeoshapingService {
 
 	public GeoshapingService() throws GeodashException {
 		try {
-			this.url = new URL(GeoshapingServiceConfig.BASE_URL + "api_key=" + GeodashConfig.GEODASH_API_KEY);
+			this.url = new URL(GeoshapingServiceConfig.CREATE_SHAPE_LAYER_BASE_URL + "api_key=" + GeodashConfig.GEODASH_API_KEY);
 		} catch (MalformedURLException e) {
 			throw new GeodashException(e.getMessage());
 		}

@@ -1,5 +1,6 @@
 <aggregatingTaskFactory>
 	<tasks>
 		<task registerAs="geodash3GetSettings" class="com.pxltd.mstr.tasks.GeodashActionGetSettingsTask" />
+		<task registerAs="geodash3GetLayer" class="com.pxltd.mstr.tasks.GeodashActionGetLayerTask" />
 	</tasks>
 </aggregatingTaskFactory>

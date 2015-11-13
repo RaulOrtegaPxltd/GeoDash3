@@ -7,10 +7,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.pxltd.geodash.ServiceException.GeoExceptionCodes;
+import com.microstrategy.utils.StringUtils;
 import com.microstrategy.utils.log.Level;
+import com.pxltd.geodash.ServiceException.GeoExceptionCodes;
 
 public class GeodashConfig {
 	private static final String BUNDLE_NAME="resources.geodash";
@@ -71,7 +70,7 @@ public class GeodashConfig {
 		return value;
 	}
 	
-	private static boolean hasProxy() throws GeodashException {
+	public static boolean hasProxy() throws GeodashException {
 		if(StringUtils.isNotEmpty(GeodashConfig.PROXY_SERVER_ADDRESS) && StringUtils.isNotEmpty(GeodashConfig.PROXY_SERVER_PORT)){
 			return true;
 		}else{

@@ -6,8 +6,10 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import com.microstrategy.utils.log.Level;
+
 public class LicenseCheck implements Runnable {
-	private final String BASE_URL = GeoshapingServiceConfig.BASE_SERVER + "api/service/license_check";
+	private final String BASE_URL = GeoshapingServiceConfig.BASE_SERVER + GeoshapingServiceConfig.LICENSE_CHECK_BASE_URL;
 
 	private String userOjbectId = "";
 
@@ -27,11 +29,13 @@ public class LicenseCheck implements Runnable {
 			output.close();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			StringBuffer buffer = new StringBuffer();
 			for (String line; (line = reader.readLine()) != null;) {
-				// System.out.println(line);
+				buffer.append(line);
 			}
+			Log.logger.logp(Level.FINE, this.getClass().getName(), "run", "Response from license check service: " + buffer.toString());
 		} catch (Exception e) {
-			// e.printStackTrace();
+			Log.logger.throwing(this.getClass().getName(), "run", e);
 		}
 	}
 }

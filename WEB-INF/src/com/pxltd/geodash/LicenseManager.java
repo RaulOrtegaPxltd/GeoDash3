@@ -12,8 +12,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.bdl.service.ServiceException;
-import com.bdl.service.mstr.MstrLog;
 import com.microstrategy.utils.log.Level;
 
 import sun.misc.BASE64Decoder;
@@ -33,7 +31,7 @@ public final class LicenseManager {
 			dcipher = Cipher.getInstance(blowfishKey.getAlgorithm());
 			dcipher.init(Cipher.DECRYPT_MODE, blowfishKey);
 		} catch (Exception e) {
-			MstrLog.logger.logp(Level.SEVERE, "LicenseManager", "Constructor", MstrLog.EXCEPTION, e);
+			Log.logger.logp(Level.SEVERE, "LicenseManager", "Constructor", Log.EXCEPTION, e);
 			throw new ServiceException("There was a general error while reading the license keys.  Please make sure you are using a valid key.");
 		}
 		validateLicenseKey();
