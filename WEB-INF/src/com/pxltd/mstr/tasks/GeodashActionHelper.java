@@ -11,7 +11,6 @@ import com.microstrategy.web.beans.RWBean;
 import com.microstrategy.web.beans.ResultSetBean;
 import com.microstrategy.web.beans.ViewBean;
 import com.microstrategy.web.beans.WebBeanException;
-import com.microstrategy.web.objects.RWDataSettings;
 import com.microstrategy.web.objects.WebIServerSession;
 import com.microstrategy.web.objects.WebObjectsException;
 import com.microstrategy.web.objects.rw.RWGridGraphObject;
@@ -61,7 +60,7 @@ public class GeodashActionHelper {
 		Log.logger.logp(Level.FINE, GeodashActionHelper.class.getName(), "getViewBeanByGridKey", "Entering with Grid Key:" + gridKey);
 		ViewBean viewBean = null;
 		RWInstance rwInstance = bean.getRWInstance();
-		List units = rwInstance.getData().findUnits(gridKey);
+		List<?> units = rwInstance.getData().findUnits(gridKey);
 		if (!units.isEmpty()) {
 			Object unit = units.get(0);
 			if (unit instanceof RWGridGraphObject) {
