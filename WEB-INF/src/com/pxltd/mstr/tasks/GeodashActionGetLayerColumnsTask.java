@@ -15,29 +15,20 @@ import com.microstrategy.web.objects.WebIServerSession;
 import com.microstrategy.web.tasks.TaskException;
 import com.microstrategy.web.tasks.TaskParameterMetadata;
 import com.microstrategy.web.tasks.TaskRequestContext;
+import com.pxltd.geodash.GeodashException;
 import com.pxltd.geodash.ServiceException;
-import com.pxltd.geodash.layers.AreaLayer;
-import com.pxltd.geodash.layers.DssLayer;
-import com.pxltd.geodash.layers.GD;
-import com.pxltd.geodash.layers.HeatmapLayer;
-import com.pxltd.geodash.layers.HurricaneLayer;
-import com.pxltd.geodash.layers.KmlLayer;
 import com.pxltd.geodash.layers.Layer;
-import com.pxltd.geodash.layers.MarkerLayer;
-import com.pxltd.geodash.layers.VectorLayer;
 import com.pxltd.service.mstr.ReportService;
 
-public class GeodashActionGetLayerTask extends AbstractAppTask {
-	private TaskParameterMetadata layerParam;
+public class GeodashActionGetLayerColumnsTask extends AbstractAppTask {
+	private TaskParameterMetadata gridKeyParam;
 	private TaskParameterMetadata messageIDParam;
 	private TaskParameterMetadata objectIDParam;
-	private TaskParameterMetadata gridKeyParam;
 
-	public GeodashActionGetLayerTask() {
-		super("Geodash task to get layer");
+	public GeodashActionGetLayerColumnsTask() {
+		super("Geodash task to get layer columns");
 		addSessionStateParam(true, null);
-		layerParam = addParameterMetadata("layer", "JSON of layer", true, null);
-		messageIDParam = addParameterMetadata("messageID", "The messageID", false, null);
+		messageIDParam = addParameterMetadata("messageID", "the messageID", false, null);
 		objectIDParam = addParameterMetadata("objectID", "The objectID", false, null);
 		gridKeyParam = addParameterMetadata("gridKey", "The grid key if the messageID references a document instance", false, null);
 	}
@@ -48,7 +39,7 @@ public class GeodashActionGetLayerTask extends AbstractAppTask {
 		String messageID = messageIDParam.getValue(context.getRequestKeys());
 		String objectID = objectIDParam.getValue(context.getRequestKeys());
 		String gridKey = gridKeyParam.getValue(context.getRequestKeys());
-		WebIServerSession session = context.getWebIServerSession("sessionState", null);
+		WebIServerSession session = context.getWebIServerSession("SessionState", null);
 		try {
 			AppContext appContext = ((AppTaskRequestContext) context).getAppContext();
 			ResultSetBean bean = GeodashActionHelper.getResultSetBean(appContext, session, objectID, messageID, StringUtils.isNotEmpty(gridKey));
@@ -60,7 +51,7 @@ public class GeodashActionGetLayerTask extends AbstractAppTask {
 					viewBean = ((ReportBean) bean).getViewBean();
 				}
 				if (viewBean != null) {
-					renderGetLayer(context, out, viewBean);
+					renderLayerColumns(out, viewBean);
 				} else {
 					throw new Exception("Could not get an instance of the referenced messageID");
 				}
@@ -72,37 +63,21 @@ public class GeodashActionGetLayerTask extends AbstractAppTask {
 		}
 	}
 
-	/**
-	 * renderGetLayer
+	/***
+	 * renderSettings
 	 * 
-	 * @param context
 	 * @param out
 	 * @param viewBean
-	 * @throws JSONException
 	 * @throws ServiceException
+	 * @throws JSONException
+	 * @throws GeodashException
 	 */
-	private void renderGetLayer(TaskRequestContext context, MarkupOutput out, ViewBean viewBean) throws JSONException, ServiceException {
-		JSONObject jl = new JSONObject(layerParam.getValue(context.getRequestKeys()));
-		Layer l = GD.getLayerInstance(jl);
+	private void renderLayerColumns(MarkupOutput out, ViewBean viewBean) throws ServiceException, JSONException, GeodashException {
 		ReportService rs = new ReportService(viewBean);
-		if (l instanceof MarkerLayer) {
-			MarkerLayer ml = rs.getPopulatedMarkerLayer((MarkerLayer) l, viewBean);
-			out.append(ml.toJSON().toString());
-		} else if (l instanceof AreaLayer) {
-			AreaLayer al = rs.getPopulatedAreaLayer((AreaLayer) l, viewBean);
-			out.append(al.toJSON().toString());
-		} else if (l instanceof VectorLayer) {
-			VectorLayer vl = rs.getPopulatedVectorLayer((VectorLayer) l, viewBean);
-			out.append(vl.toJSON().toString());
-		} else if (l instanceof HeatmapLayer) {
-			HeatmapLayer hl = rs.getPopulatedHeatmapLayer((HeatmapLayer) l, viewBean);
-			out.append(hl.toJSON().toString());
-		} else if (l instanceof KmlLayer) {
-			out.append(((KmlLayer) l).toJSON().toString());
-		} else if (l instanceof HurricaneLayer) {
-			out.append(((HurricaneLayer) l).toJSON().toString());
-		} else if (l instanceof DssLayer) {
-			out.append(((DssLayer) l).toJSON().toString());
-		}
+		Layer l = rs.populateColumns(new Layer());
+		JSONObject j = new JSONObject();
+		j.put("state", "ready");
+		j.put("columns", l.getColumns());
+		out.append(j.toString());
 	}
 }

@@ -1,5 +1,11 @@
 package com.pxltd.mstr.tasks;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import com.microstrategy.utils.StringUtils;
 import com.microstrategy.web.app.beans.AppContext;
 import com.microstrategy.web.app.tasks.AbstractAppTask;
@@ -16,30 +22,30 @@ import com.microstrategy.web.tasks.TaskException;
 import com.microstrategy.web.tasks.TaskParameterMetadata;
 import com.microstrategy.web.tasks.TaskRequestContext;
 import com.pxltd.geodash.ServiceException;
-import com.pxltd.geodash.layers.AreaLayer;
-import com.pxltd.geodash.layers.DssLayer;
 import com.pxltd.geodash.layers.GD;
-import com.pxltd.geodash.layers.HeatmapLayer;
-import com.pxltd.geodash.layers.HurricaneLayer;
-import com.pxltd.geodash.layers.KmlLayer;
-import com.pxltd.geodash.layers.Layer;
-import com.pxltd.geodash.layers.MarkerLayer;
-import com.pxltd.geodash.layers.VectorLayer;
+import com.pxltd.geodash.layers.MassMarkerLayer;
 import com.pxltd.service.mstr.ReportService;
+import com.pxltd.util.Base64;
 
-public class GeodashActionGetLayerTask extends AbstractAppTask {
+public class GeodashActionGetTileTask extends AbstractAppTask {
 	private TaskParameterMetadata layerParam;
-	private TaskParameterMetadata messageIDParam;
-	private TaskParameterMetadata objectIDParam;
 	private TaskParameterMetadata gridKeyParam;
+	private TaskParameterMetadata objectIDParam;
+	private TaskParameterMetadata messageIDParam;
+	private TaskParameterMetadata xParam;
+	private TaskParameterMetadata yParam;
+	private TaskParameterMetadata zParam;
 
-	public GeodashActionGetLayerTask() {
-		super("Geodash task to get layer");
+	public GeodashActionGetTileTask() {
+		super("Geodash task to get title");
 		addSessionStateParam(true, null);
 		layerParam = addParameterMetadata("layer", "JSON of layer", true, null);
-		messageIDParam = addParameterMetadata("messageID", "The messageID", false, null);
+		messageIDParam = addParameterMetadata("messageID", "the messageID", false, null);
 		objectIDParam = addParameterMetadata("objectID", "The objectID", false, null);
-		gridKeyParam = addParameterMetadata("gridKey", "The grid key if the messageID references a document instance", false, null);
+		gridKeyParam = addParameterMetadata("gridKey", "The grid key if the messageID/objectID references a document instance", false, null);
+		xParam = addParameterMetadata("x", "the x", true, null);
+		yParam = addParameterMetadata("y", "the x", true, null);
+		zParam = addParameterMetadata("z", "the x", true, null);
 	}
 
 	@Override
@@ -48,7 +54,7 @@ public class GeodashActionGetLayerTask extends AbstractAppTask {
 		String messageID = messageIDParam.getValue(context.getRequestKeys());
 		String objectID = objectIDParam.getValue(context.getRequestKeys());
 		String gridKey = gridKeyParam.getValue(context.getRequestKeys());
-		WebIServerSession session = context.getWebIServerSession("sessionState", null);
+		WebIServerSession session = context.getWebIServerSession("SessionState", null);
 		try {
 			AppContext appContext = ((AppTaskRequestContext) context).getAppContext();
 			ResultSetBean bean = GeodashActionHelper.getResultSetBean(appContext, session, objectID, messageID, StringUtils.isNotEmpty(gridKey));
@@ -60,7 +66,7 @@ public class GeodashActionGetLayerTask extends AbstractAppTask {
 					viewBean = ((ReportBean) bean).getViewBean();
 				}
 				if (viewBean != null) {
-					renderGetLayer(context, out, viewBean);
+					renderTile(context, out, viewBean);
 				} else {
 					throw new Exception("Could not get an instance of the referenced messageID");
 				}
@@ -73,36 +79,29 @@ public class GeodashActionGetLayerTask extends AbstractAppTask {
 	}
 
 	/**
-	 * renderGetLayer
+	 * renderTitle
 	 * 
 	 * @param context
 	 * @param out
 	 * @param viewBean
-	 * @throws JSONException
 	 * @throws ServiceException
+	 * @throws JSONException
+	 * @throws IOException
 	 */
-	private void renderGetLayer(TaskRequestContext context, MarkupOutput out, ViewBean viewBean) throws JSONException, ServiceException {
-		JSONObject jl = new JSONObject(layerParam.getValue(context.getRequestKeys()));
-		Layer l = GD.getLayerInstance(jl);
+	public void renderTile(TaskRequestContext context, MarkupOutput out, ViewBean viewBean) throws ServiceException, JSONException, IOException {
+		JSONObject j = new JSONObject();
 		ReportService rs = new ReportService(viewBean);
-		if (l instanceof MarkerLayer) {
-			MarkerLayer ml = rs.getPopulatedMarkerLayer((MarkerLayer) l, viewBean);
-			out.append(ml.toJSON().toString());
-		} else if (l instanceof AreaLayer) {
-			AreaLayer al = rs.getPopulatedAreaLayer((AreaLayer) l, viewBean);
-			out.append(al.toJSON().toString());
-		} else if (l instanceof VectorLayer) {
-			VectorLayer vl = rs.getPopulatedVectorLayer((VectorLayer) l, viewBean);
-			out.append(vl.toJSON().toString());
-		} else if (l instanceof HeatmapLayer) {
-			HeatmapLayer hl = rs.getPopulatedHeatmapLayer((HeatmapLayer) l, viewBean);
-			out.append(hl.toJSON().toString());
-		} else if (l instanceof KmlLayer) {
-			out.append(((KmlLayer) l).toJSON().toString());
-		} else if (l instanceof HurricaneLayer) {
-			out.append(((HurricaneLayer) l).toJSON().toString());
-		} else if (l instanceof DssLayer) {
-			out.append(((DssLayer) l).toJSON().toString());
-		}
+		JSONObject jl = new JSONObject(layerParam.getValue(context.getRequestKeys()));
+		String x = xParam.getValue(context.getRequestKeys());
+		String y = yParam.getValue(context.getRequestKeys());
+		String z = zParam.getValue(context.getRequestKeys());
+		MassMarkerLayer l = (MassMarkerLayer) GD.getLayerInstance(jl);
+		BufferedImage image = rs.getPopulatedTile(viewBean, l, x, y, z);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(image, "png", baos);
+		byte[] bytes = baos.toByteArray();
+		String base64str = Base64.encodeBytes(bytes);
+		j.put("image", "data:image/png;base64," + base64str);
+		out.append(j.toString());
 	}
 }
