@@ -2,5 +2,6 @@
 	<tasks>
 		<task registerAs="geodash3GetSettings" class="com.pxltd.mstr.tasks.GeodashActionGetSettingsTask" />
 		<task registerAs="geodash3GetLayer" class="com.pxltd.mstr.tasks.GeodashActionGetLayerTask" />
+		<task registerAs="geodash3GetLayerColumns" class = "com.pxltd.mstr.tasks.GeodashActionGetLayerColumnsTask" />
 	</tasks>
 </aggregatingTaskFactory>

@@ -359,6 +359,13 @@ var visName = "Geodash3Vis";
 		renderGraph : function() {
 
 			this.model.docModel = mstrApp.docModel;
+			if(!mstrApp.customVisualizations){
+				mstrApp.customVisualizations = [];
+			}
+			mstrApp.customVisualizations.push(this);
+			if(!this.defn.vis){
+				this.defn.vis = {'vn':"Geodash3MojoVisualizationStyle"};
+			}
 			vis = this;
 
 			var data = this.prepareData();
@@ -381,7 +388,6 @@ var visName = "Geodash3Vis";
 			var renderGeodash = function(gdConfig) {
 					// base
 				
-					debugger;
 					var base = 	{
 							'api': gdConfig.webAPI,
 							'mapType': 0,
@@ -422,7 +428,6 @@ var visName = "Geodash3Vis";
 					}
 			};
 			
-			//debugger;
 			// Call validation task validateGeodashPrivileges passing the sessionState : mstrApp.sessionState			
 			mstrmojo.xhr.request("POST",mstrConfig.taskURL,{success:renderGeodash,failure:function(){alert("An error ocurred");}},{taskId:"geodash3GetSettings",sessionState:mstrApp.sessionState});
 			

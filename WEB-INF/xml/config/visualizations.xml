@@ -1,5 +1,6 @@
 <visualizations>
 	<visualization-list name="ajax">
 		<visualization desc="Geodash3" id="Geodash3" is-mojo="true" scope="19" style-name="Geodash3MojoVisualizationStyle" />
+		<visualization desc="GdGrid" id="GdGrid" is-mojo="true" scope="19" style-name="GdGridMojoVisualizationStyle" />
 	</visualization-list>
 </visualizations>
