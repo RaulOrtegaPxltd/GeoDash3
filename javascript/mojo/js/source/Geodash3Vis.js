@@ -144,6 +144,7 @@ var visName = "Geodash3Vis";
 	[ mstrmojo._LoadsScript, mstrmojo._HasSelector ], {
 		scriptClass : 'mstrmojo.plugins.' + vis3rdPartyFramework + '.' + visName,
 		model : null,
+		skipReRender : true,
 		/**
 		 * markupString is a structure of a div to create as a placeholder for charts id is important since will be passed in to Google code as reference to div to append results
 		 */
@@ -152,10 +153,11 @@ var visName = "Geodash3Vis";
 		/**
 		 * code is ready lets prepare data
 		 */
-		postBuildRendering : function() {
+ 		postBuildRendering : function() {
 			if (this._super) {
 				this._super();
-			}
+			}			
+			
 			// load browser compatibility styles
 			// IE/Chrome
 			loadCSSFile("../plugins/Geodash3/javascript/geodash-ui/css/ie.css");
@@ -405,7 +407,8 @@ var visName = "Geodash3Vis";
 					};
 
 					window["gd"] = new bdl.geodash.GD(_.extend({
-						el : vis.domNode
+						el : vis.domNode,
+						gridKey : vis.k
 					}, base));
 
 					// layers
