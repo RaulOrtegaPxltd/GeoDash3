@@ -385,7 +385,23 @@ var visName = "Geodash3Vis";
 			visContainer.style.height = ("" + this.height).indexOf("px") > -1 ? this.height : this.height + "px";
 			visContainer.style.overflow = 'hidden';
 
-			// VISUALIZATION CODE			
+			// VISUALIZATION CODE	
+			
+			var renderLayers = function(layers) {
+				if(layers && layers.length && layers.length>0){
+					for(var i in layers){
+						var geoDashLayer;
+						var ex = "geoDashLayer = new " +  layers[i].scriptClass + "(" + JSON.stringify(layers[i].layer) + ");";						
+						eval(ex);
+						gd.layers.add(geoDashLayer);
+					}
+				}
+				if (gd.layers.length == 0) {
+					window.setTimeout(function() {
+						gd.newLayer()
+					}, 225);
+				}
+			}
 			
 			var renderGeodash = function(gdConfig) {
 					// base
@@ -395,7 +411,7 @@ var visName = "Geodash3Vis";
 							'mapType': 0,
 							'version': gdConfig.version,
 							'clientID': gdConfig.googleClientID,
-							'gdAPIKey': gdConfig.googleAPIKey,
+							'gdAPIKey': gdConfig.geoDashAPIKey,
 							'status': 'ready',
 							'sourceColumns' : [{'attID':"6FD68CD440A3269A507C139A52BEB6B4",'name':"Confined Space Number",'type':"attribute"},{'attID':"CFA1B94342203DF85BB96F839AA926DD",'name':"All Lat lng",'type':"attribute"},{'name':"Total Confined Spaces",'type':"metric"},{'name':"Total Days Open",'type':"metric"}],
 							'selector' : "6FD68CD440A3269A507C139A52BEB6B4",
@@ -403,32 +419,17 @@ var visName = "Geodash3Vis";
 							'permissions': {'edit':true, 'view':true, 'showLayerNavigator':true},
 							'isDoc': true,
 							'isSSL': gdConfig.useSSL,
-							'errors':[]
+							'errors':[],
+							'parent': vis
 					};
 
 					window["gd"] = new bdl.geodash.GD(_.extend({
 						el : vis.domNode,
-						gridKey : vis.k
 					}, base));
 
 					// layers
-					
-					//TODO: For each layer. If current, then get the dataInterface and transform to the JSON format expected by the viz
-					//If another grid in this dashboard, get that grid's dataInterface and transform
-					//If external report, call task to get external data.
-					
-					
-//					 gd.layers.add(new bdl.geodash.HurricaneLayer({"id":1,"errors":[],"dss_product_item_id":"1629","name":"Hurricane1","state":"not_ready","on":true,"type":"hurricaneLayer","dss_product_item_name":"2012-10-21 - SANDY"}));
-//					 gd.layers.add(new bdl.geodash.DssLayer({"id":2,"errors":[],"settings":{"end_date":"2014-08-01","max_mag":"6","min_mag":"3","min_depth":"100","start_date":"2014-04-01","max_depth":"500"},"dss_product_type":"earthquake","dss_product_item_id":"null","name":"Earthquality1","state":"not_ready","on":true,"type":"dssLayer:earthquake"}));
-//					 gd.layers.add(new bdl.geodash.MarkerLayer({"infoWindowHeight":240,"columns":[{"attID":"6FD68CD440A3269A507C139A52BEB6B4","name":"Confined Space Number","type":"attribute"},{"attID":"CFA1B94342203DF85BB96F839AA926DD","name":"All Lat lng","type":"attribute"},{"name":"Total Confined Spaces","type":"metric"},{"name":"Total Days Open","type":"metric"}],"state":"not_ready","geom":[],"type":"markerLayer","id":0,"circles":[],"errors":[],"name":"MarkerLayer1","colorType":"threshold","on":true,"minMarkerWidth":10,"staticColor":"ff9900","iconType":"dynamic-pin","keys":{"title":0,"geo":1,"colorMetric":2,"sizeMetric":0},"infoWindow":"default","maxMarkerWidth":250,"gdGridId":"","reportID":"","rows":[],"showInfoWindow":true,"infoWindowDocumentURL":"","source":"current","idValues":{},"cluster":false,"rowsOfElementIds":[],"infoWindowWidth":320}));
-//					 gd.layers.add(new bdl.geodash.MarkerLayer({"infoWindowHeight":240,"state":"not_ready","geom":[],"type":"markerLayer","id":3,"circles":[],"errors":[],"name":"New Layer","colorType":"threshold","on":true,"minMarkerWidth":10,"staticColor":"ff9900","iconType":"dynamic-pin","keys":{"title":3,"geo":0,"colorMetric":11,"sizeMetric":0},"infoWindow":"default","maxMarkerWidth":250,"gdGridId":"","reportID":"B311245C43CEB1A92CBE5D99A2378580","rows":[],"showInfoWindow":true,"infoWindowDocumentURL":"","source":"external","cluster":false,"idValues":{},"rowsOfElementIds":[],"infoWindowWidth":320}));
-					 
-					
-					if (gd.layers.length == 0) {
-						window.setTimeout(function() {
-							gd.newLayer()
-						}, 225);
-					}
+					var taskInfo = {taskId:"geodash3GetLayers",sessionState:mstrApp.sessionState, messageID:mstrApp.getMsgID(), gridKey:vis.k};
+					mstrmojo.xhr.request("POST",mstrConfig.taskURL,{success:renderLayers,failure:function(){alert("An error ocurred");}},taskInfo);
 			};
 			
 			// Call validation task validateGeodashPrivileges passing the sessionState : mstrApp.sessionState			
