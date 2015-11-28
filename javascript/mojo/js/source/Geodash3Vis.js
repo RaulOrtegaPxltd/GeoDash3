@@ -416,10 +416,17 @@ var visName = "Geodash3Vis";
 					}, 225);
 				}
 			}
+			
+			var renderColumns = function(data) {
+				if (data && data.columns && data.columns.length > 0) {
+					for (var i in data.columns) {
+						gd.base.attributes.sourceColumns.push(data.columns[i]);
+					}
+				}
+			}
 
 			var renderGeodash = function(gdConfig) {
 				// base
-
 				var base = {
 					'api' : gdConfig.webAPI,
 					'mapType' : 0,
@@ -427,21 +434,22 @@ var visName = "Geodash3Vis";
 					'clientID' : gdConfig.googleClientID,
 					'gdAPIKey' : gdConfig.geoDashAPIKey,
 					'status' : 'ready',
-					'sourceColumns' : [ {
-						'attID' : "6FD68CD440A3269A507C139A52BEB6B4",
-						'name' : "Confined Space Number",
-						'type' : "attribute"
-					}, {
-						'attID' : "CFA1B94342203DF85BB96F839AA926DD",
-						'name' : "All Lat lng",
-						'type' : "attribute"
-					}, {
-						'name' : "Total Confined Spaces",
-						'type' : "metric"
-					}, {
-						'name' : "Total Days Open",
-						'type' : "metric"
-					} ],
+					'sourceColumns' : [],
+						//'attID' : "6FD68CD440A3269A507C139A52BEB6B4",
+						//'name' : "Confined Space Number",
+						//'type' : "attribute"
+					//}, {
+						//'attID' : "CFA1B94342203DF85BB96F839AA926DD",
+						//'name' : "All Lat lng",
+						//'type' : "attribute"
+				//	}, {
+				//		'name' : "Total Confined Spaces",
+				//		'type' : "metric"
+				//	}, {
+				//		'name' : "Total Days Open",
+				//		'type' : "metric"
+				//	} ],
+					//TODO: Set selector dynamically
 					'selector' : "6FD68CD440A3269A507C139A52BEB6B4",
 					'isBuilding' : false,
 					'permissions' : {
@@ -454,13 +462,31 @@ var visName = "Geodash3Vis";
 					'errors' : [],
 					'parent' : vis
 				};
-
+				
+				
 				window["gd"] = new bdl.geodash.GD(_.extend({
 					el : vis.domNode,
 				}, base));
 
-				// layers
+				//columns
 				var taskInfo = {
+					taskId : "geodash3GetLayerColumns",
+					sessionState : mstrApp.sessionState,
+					messageID : mstrApp.getMsgID(),
+					gridKey : vis.k
+				};
+				
+				mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
+					success : renderColumns,
+					failure : function() {
+						alert("An error ocurred");
+					}
+				}, taskInfo);
+				
+				debugger;
+				
+				// layers
+				taskInfo = {
 					taskId : "geodash3GetLayers",
 					sessionState : mstrApp.sessionState,
 					messageID : mstrApp.getMsgID(),
