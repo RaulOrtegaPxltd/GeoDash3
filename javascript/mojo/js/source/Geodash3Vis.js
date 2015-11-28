@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////////////////////
 // _HasSelector.js
 
 (function() {
@@ -153,11 +153,23 @@ var visName = "Geodash3Vis";
 		/**
 		 * code is ready lets prepare data
 		 */
- 		postBuildRendering : function() {
+		postBuildRendering : function() {
 			if (this._super) {
 				this._super();
-			}			
-			
+			}
+			if (typeof (gd) != 'undefined') {
+				if (this.domNode.childNodes.length == 0) {
+					var parent = this.domNode.parentNode;
+					parent.removeChild(this.domNode);
+					parent.appendChild(gd.el);
+					gd.el.style.width = this.width + "px";
+					gd.el.style.height = this.height + "px";
+					this.domNode = gd.el;
+					gd.resize();
+				}
+				return;
+			}
+
 			// load browser compatibility styles
 			// IE/Chrome
 			loadCSSFile("../plugins/Geodash3/javascript/geodash-ui/css/ie.css");
@@ -361,12 +373,14 @@ var visName = "Geodash3Vis";
 		renderGraph : function() {
 
 			this.model.docModel = mstrApp.docModel;
-			if(!mstrApp.customVisualizations){
+			if (!mstrApp.customVisualizations) {
 				mstrApp.customVisualizations = [];
 			}
 			mstrApp.customVisualizations.push(this);
-			if(!this.defn.vis){
-				this.defn.vis = {'vn':"Geodash3MojoVisualizationStyle"};
+			if (!this.defn.vis) {
+				this.defn.vis = {
+					'vn' : "Geodash3MojoVisualizationStyle"
+				};
 			}
 			vis = this;
 
@@ -385,13 +399,13 @@ var visName = "Geodash3Vis";
 			visContainer.style.height = ("" + this.height).indexOf("px") > -1 ? this.height : this.height + "px";
 			visContainer.style.overflow = 'hidden';
 
-			// VISUALIZATION CODE	
-			
+			// VISUALIZATION CODE
+
 			var renderLayers = function(layers) {
-				if(layers && layers.length && layers.length>0){
-					for(var i in layers){
+				if (layers && layers.length && layers.length > 0) {
+					for ( var i in layers) {
 						var geoDashLayer;
-						var ex = "geoDashLayer = new " +  layers[i].scriptClass + "(" + JSON.stringify(layers[i].layer) + ");";						
+						var ex = "geoDashLayer = new " + layers[i].scriptClass + "(" + JSON.stringify(layers[i].layer) + ");";
 						eval(ex);
 						gd.layers.add(geoDashLayer);
 					}
@@ -402,39 +416,75 @@ var visName = "Geodash3Vis";
 					}, 225);
 				}
 			}
-			
+
 			var renderGeodash = function(gdConfig) {
-					// base
-				
-					var base = 	{
-							'api': gdConfig.webAPI,
-							'mapType': 0,
-							'version': gdConfig.version,
-							'clientID': gdConfig.googleClientID,
-							'gdAPIKey': gdConfig.geoDashAPIKey,
-							'status': 'ready',
-							'sourceColumns' : [{'attID':"6FD68CD440A3269A507C139A52BEB6B4",'name':"Confined Space Number",'type':"attribute"},{'attID':"CFA1B94342203DF85BB96F839AA926DD",'name':"All Lat lng",'type':"attribute"},{'name':"Total Confined Spaces",'type':"metric"},{'name':"Total Days Open",'type':"metric"}],
-							'selector' : "6FD68CD440A3269A507C139A52BEB6B4",
-							'isBuilding' : false,
-							'permissions': {'edit':true, 'view':true, 'showLayerNavigator':true},
-							'isDoc': true,
-							'isSSL': gdConfig.useSSL,
-							'errors':[],
-							'parent': vis
-					};
+				// base
 
-					window["gd"] = new bdl.geodash.GD(_.extend({
-						el : vis.domNode,
-					}, base));
+				var base = {
+					'api' : gdConfig.webAPI,
+					'mapType' : 0,
+					'version' : gdConfig.version,
+					'clientID' : gdConfig.googleClientID,
+					'gdAPIKey' : gdConfig.geoDashAPIKey,
+					'status' : 'ready',
+					'sourceColumns' : [ {
+						'attID' : "6FD68CD440A3269A507C139A52BEB6B4",
+						'name' : "Confined Space Number",
+						'type' : "attribute"
+					}, {
+						'attID' : "CFA1B94342203DF85BB96F839AA926DD",
+						'name' : "All Lat lng",
+						'type' : "attribute"
+					}, {
+						'name' : "Total Confined Spaces",
+						'type' : "metric"
+					}, {
+						'name' : "Total Days Open",
+						'type' : "metric"
+					} ],
+					'selector' : "6FD68CD440A3269A507C139A52BEB6B4",
+					'isBuilding' : false,
+					'permissions' : {
+						'edit' : true,
+						'view' : true,
+						'showLayerNavigator' : true
+					},
+					'isDoc' : true,
+					'isSSL' : gdConfig.useSSL,
+					'errors' : [],
+					'parent' : vis
+				};
 
-					// layers
-					var taskInfo = {taskId:"geodash3GetLayers",sessionState:mstrApp.sessionState, messageID:mstrApp.getMsgID(), gridKey:vis.k};
-					mstrmojo.xhr.request("POST",mstrConfig.taskURL,{success:renderLayers,failure:function(){alert("An error ocurred");}},taskInfo);
+				window["gd"] = new bdl.geodash.GD(_.extend({
+					el : vis.domNode,
+				}, base));
+
+				// layers
+				var taskInfo = {
+					taskId : "geodash3GetLayers",
+					sessionState : mstrApp.sessionState,
+					messageID : mstrApp.getMsgID(),
+					gridKey : vis.k
+				};
+				mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
+					success : renderLayers,
+					failure : function() {
+						alert("An error ocurred");
+					}
+				}, taskInfo);
 			};
-			
-			// Call validation task validateGeodashPrivileges passing the sessionState : mstrApp.sessionState			
-			mstrmojo.xhr.request("POST",mstrConfig.taskURL,{success:renderGeodash,failure:function(){alert("An error ocurred");}},{taskId:"geodash3GetSettings",sessionState:mstrApp.sessionState});
-			
+
+			// Call validation task validateGeodashPrivileges passing the sessionState : mstrApp.sessionState
+			mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
+				success : renderGeodash,
+				failure : function() {
+					alert("An error ocurred");
+				}
+			}, {
+				taskId : "geodash3GetSettings",
+				sessionState : mstrApp.sessionState
+			});
+
 		},
 		prepareData : function() {
 			var results = [];
