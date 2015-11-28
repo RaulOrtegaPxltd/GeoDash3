@@ -435,20 +435,6 @@ var visName = "Geodash3Vis";
 					'gdAPIKey' : gdConfig.geoDashAPIKey,
 					'status' : 'ready',
 					'sourceColumns' : [],
-						//'attID' : "6FD68CD440A3269A507C139A52BEB6B4",
-						//'name' : "Confined Space Number",
-						//'type' : "attribute"
-					//}, {
-						//'attID' : "CFA1B94342203DF85BB96F839AA926DD",
-						//'name' : "All Lat lng",
-						//'type' : "attribute"
-				//	}, {
-				//		'name' : "Total Confined Spaces",
-				//		'type' : "metric"
-				//	}, {
-				//		'name' : "Total Days Open",
-				//		'type' : "metric"
-				//	} ],
 					//TODO: Set selector dynamically
 					'selector' : "6FD68CD440A3269A507C139A52BEB6B4",
 					'isBuilding' : false,
@@ -482,8 +468,6 @@ var visName = "Geodash3Vis";
 						alert("An error ocurred");
 					}
 				}, taskInfo);
-				
-				debugger;
 				
 				// layers
 				taskInfo = {
