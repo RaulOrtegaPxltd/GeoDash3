@@ -149,7 +149,7 @@ var visName = "Geodash3Vis";
 		 * markupString is a structure of a div to create as a placeholder for charts id is important since will be passed in to Google code as reference to div to append results
 		 */
 		// markupString : '<div id="GeoDash3Vis_{@id}"></div>',
-		markupString : '<div id="geodash"></div>',
+		markupString : '<div id="geodash" style="z-index:1000;"></div>',
 		/**
 		 * code is ready lets prepare data
 		 */
