@@ -67,6 +67,7 @@ var visName = "GdGridVis";
 			mstrApp.customVisualizations.push(this);
 			if(!this.defn.vis){
 				this.defn.vis = {'vn':"GdGridMojoVisualizationStyle"};
+				this.defn.parent = this;
 			}
 			vis = this;
 

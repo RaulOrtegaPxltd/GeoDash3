@@ -166,6 +166,35 @@ var visName = "Geodash3Vis";
 					gd.el.style.height = this.height + "px";
 					this.domNode = gd.el;
 					gd.resize();
+					// We need to make sure the layer exist in the visualizations
+					//debugger;
+					var verifyLayers = function(layers) {
+						if (typeof (layers) == 'undefined' || (layers && layers.length == 0)) {
+							var currentLayers = gd.layers.models;
+							for (i = 0; i < currentLayers.length; i++) {
+								var action = bdl.geodash.MSTR.saveModel({
+									model : currentLayers[i],
+									success : null,
+									error : null
+								});
+							}
+						}
+					}
+
+					// layers
+					taskInfo = {
+						taskId : "geodash3GetLayers",
+						sessionState : mstrApp.sessionState,
+						messageID : mstrApp.getMsgID(),
+						gridKey : this.k
+					};
+					mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
+						success : verifyLayers,
+						failure : function() {
+							alert("An error ocurred");
+						}
+					}, taskInfo);
+
 				}
 				return;
 			}
@@ -416,10 +445,10 @@ var visName = "Geodash3Vis";
 					}, 225);
 				}
 			}
-			
+
 			var renderColumns = function(data) {
 				if (data && data.columns && data.columns.length > 0) {
-					for (var i in data.columns) {
+					for ( var i in data.columns) {
 						gd.base.attributes.sourceColumns.push(data.columns[i]);
 					}
 				}
@@ -435,7 +464,7 @@ var visName = "Geodash3Vis";
 					'gdAPIKey' : gdConfig.geoDashAPIKey,
 					'status' : 'ready',
 					'sourceColumns' : [],
-					//TODO: Set selector dynamically
+					// TODO: Set selector dynamically
 					'selector' : "6FD68CD440A3269A507C139A52BEB6B4",
 					'isBuilding' : false,
 					'permissions' : {
@@ -448,27 +477,26 @@ var visName = "Geodash3Vis";
 					'errors' : [],
 					'parent' : vis
 				};
-				
-				
+
 				window["gd"] = new bdl.geodash.GD(_.extend({
 					el : vis.domNode,
 				}, base));
 
-				//columns
+				// columns
 				var taskInfo = {
 					taskId : "geodash3GetLayerColumns",
 					sessionState : mstrApp.sessionState,
 					messageID : mstrApp.getMsgID(),
 					gridKey : vis.k
 				};
-				
+
 				mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
 					success : renderColumns,
 					failure : function() {
 						alert("An error ocurred");
 					}
 				}, taskInfo);
-				
+
 				// layers
 				taskInfo = {
 					taskId : "geodash3GetLayers",
