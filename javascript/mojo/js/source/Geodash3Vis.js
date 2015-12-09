@@ -167,7 +167,8 @@ var visName = "Geodash3Vis";
 					this.domNode = gd.el;
 					gd.resize();
 					// We need to make sure the layer exist in the visualizations
-					var verifyLayers = function(layers) {
+					var verifyLayers = function(json) {
+						var layers = json.layers
 						if (typeof (layers) == 'undefined' || (layers && layers.length == 0)) {
 							var currentLayers = gd.layers.models;
 							for (i = 0; i < currentLayers.length; i++) {
@@ -182,7 +183,7 @@ var visName = "Geodash3Vis";
 
 					// layers
 					taskInfo = {
-						taskId : "geodash3GetLayers",
+						taskId : "geodash3GetJson",
 						sessionState : mstrApp.sessionState,
 						messageID : mstrApp.getMsgID(),
 						gridKey : this.k
