@@ -42,7 +42,7 @@ public class GeodashActionDeleteLayerTask extends AbstractAppTask {
 		String messageID = messageIDParam.getValue(context.getRequestKeys());
 		String objectID = objectIDParam.getValue(context.getRequestKeys());
 		String gridKey = gridKeyParam.getValue(context.getRequestKeys());
-		WebIServerSession session = context.getWebIServerSession("SessionState", null);
+		WebIServerSession session = context.getWebIServerSession("sessionState", null);
 		try {
 			AppContext appContext = ((AppTaskRequestContext) context).getAppContext();
 			ResultSetBean bean = GeodashActionHelper.getResultSetBean(appContext, session, objectID, messageID, StringUtils.isNotEmpty(gridKey));

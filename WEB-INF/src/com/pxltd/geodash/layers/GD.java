@@ -188,7 +188,7 @@ public class GD {
 		
 		String str = xmlOutput.getWriter().toString();
 		
-		return xmlOutput.getWriter().toString();
+		return str;
 	}
 	
 	// used for render just the base when rendering geodash initially

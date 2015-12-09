@@ -167,7 +167,6 @@ var visName = "Geodash3Vis";
 					this.domNode = gd.el;
 					gd.resize();
 					// We need to make sure the layer exist in the visualizations
-					//debugger;
 					var verifyLayers = function(layers) {
 						if (typeof (layers) == 'undefined' || (layers && layers.length == 0)) {
 							var currentLayers = gd.layers.models;
@@ -429,12 +428,38 @@ var visName = "Geodash3Vis";
 			visContainer.style.overflow = 'hidden';
 
 			// VISUALIZATION CODE
-
-			var renderLayers = function(layers) {
+			var renderLayers = function(json) {
+				var getScriptClass = function(type){
+					if(type=="markerLayer"){
+						return "bdl.geodash.MarkerLayer";
+					}
+					if(type=="massMarkerLayer"){
+						return "bdl.geodash.MassMarkerLayer";
+					}
+					if(type=="areaLayer"){
+						return "bdl.geodash.AreaLayer";
+					}
+					if(type=="kmlLayer"){
+						return "bdl.geodash.KMLLayer";
+					}
+					if(type=="vectorLayer"){
+						return "bdl.geodash.VectorLayer";
+					}
+					if(type=="heatMapLayer"){
+						return "bdl.geodash.HeatMapLayer";
+					}
+					if(type=="hurricaneLayer"){
+						return "bdl.geodash.HurricaneLayer";
+					}
+					if(type=="dssLayer:earthquake"){
+						return "bdl.geodash.DssLayer";
+					}
+				};
+				var layers = json.layers;
 				if (layers && layers.length && layers.length > 0) {
 					for ( var i in layers) {
 						var geoDashLayer;
-						var ex = "geoDashLayer = new " + layers[i].scriptClass + "(" + JSON.stringify(layers[i].layer) + ");";
+						var ex = "geoDashLayer = new " + getScriptClass(layers[i].type) + "(" + JSON.stringify(layers[i]) + ");";
 						eval(ex);
 						gd.layers.add(geoDashLayer);
 					}
@@ -499,7 +524,7 @@ var visName = "Geodash3Vis";
 
 				// layers
 				taskInfo = {
-					taskId : "geodash3GetLayers",
+					taskId : "geodash3GetJson",
 					sessionState : mstrApp.sessionState,
 					messageID : mstrApp.getMsgID(),
 					gridKey : vis.k

@@ -1,11 +1,11 @@
 <aggregatingTaskFactory>
 	<tasks>
 		<task registerAs="geodash3GetSettings" class="com.pxltd.mstr.tasks.GeodashActionGetSettingsTask" />
-		<task registerAs="geodash3GetLayers" class="com.pxltd.mstr.tasks.GeodashActionGetLayersTask" />
 		<task registerAs="geodash3GetLayer" class="com.pxltd.mstr.tasks.GeodashActionGetLayerTask" />
 		<task registerAs="geodash3GetLayerColumns" class = "com.pxltd.mstr.tasks.GeodashActionGetLayerColumnsTask" />
 		<task registerAs="geodash3SaveLayer" class = "com.pxltd.mstr.tasks.GeodashActionSaveLayerTask" />
 		<task registerAs="geodash3DeleteLayer" class = "com.pxltd.mstr.tasks.GeodashActionDeleteLayerTask" />
 		<task registerAs="geodash3GetTile" class = "com.pxltd.mstr.tasks.GeodashActionGetTileTask" />
+		<task registerAs="geodash3GetJson" class = "com.pxltd.mstr.tasks.GeodashActionGetJsonTask" />
 	</tasks>
 </aggregatingTaskFactory>
