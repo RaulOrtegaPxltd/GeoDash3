@@ -105,6 +105,36 @@
 			attElementID = attElementID.substr(0, attElementID.lastIndexOf(":"));
 			attElementID = parseInt(attElementID.substr(attElementID.lastIndexOf(":") + 1));
 			return attElementID == this.idSelected;
+		},
+		submitEvents : function(events) {
+			debugger;
+			this.model.controller.model.slice({
+				bufferedSlices : true,
+				tks : (mstrmojo.hash.any(events) || {}).tks,
+				events : events
+			});
+		},
+		getEventForSelection : function(elementID, sc) {
+			debugger;
+			var m = this.getData();
+			var result = {
+				ck : sc.ck,
+				eid : elementID,
+				src : m.k,
+				tks : sc.tks,
+				ctlKey : sc.ckey,
+				include : true
+			};
+			return result;
+		},
+		getElementID : function(warehouseID) {
+			var element = this.getData().gts.row[0].es.filter(function(val, index, array) {
+				return val.n === warehouseID;
+			});
+			return element && element[0].id;
+		},
+		getSC : function() {
+			return this.getData().gts.row[0].sc;
 		}
 	});
 }());
@@ -149,7 +179,10 @@ var visName = "Geodash3Vis";
 		 * markupString is a structure of a div to create as a placeholder for charts id is important since will be passed in to Google code as reference to div to append results
 		 */
 		// markupString : '<div id="GeoDash3Vis_{@id}"></div>',
-		markupString : '<div id="geodash" style="z-index:1000;"></div>',
+		//markupString : '<div id="geodash" style="z-index:50;"></div>',
+        markupString: '<div class="custom-vis-layout {@cssClass}" style="position:absolute;left:{@left}px;top:{@top}px;overflow:hidden;width:{@width}px;height:{@height}px;z-index:{@zIndex};{@viewportCssText}">' +
+        '<div id="geodash" style="z-index:{@zIndex};"></div>' +
+        '</div>',
 		/**
 		 * code is ready lets prepare data
 		 */
@@ -400,7 +433,6 @@ var visName = "Geodash3Vis";
 		 * Render Graph
 		 */
 		renderGraph : function() {
-
 			this.model.docModel = mstrApp.docModel;
 			if (!mstrApp.customVisualizations) {
 				mstrApp.customVisualizations = [];
@@ -430,37 +462,37 @@ var visName = "Geodash3Vis";
 
 			// VISUALIZATION CODE
 			var renderLayers = function(json) {
-				var getScriptClass = function(type){
-					if(type=="markerLayer"){
+				var getScriptClass = function(type) {
+					if (type == "markerLayer") {
 						return "bdl.geodash.MarkerLayer";
 					}
-					if(type=="massMarkerLayer"){
+					if (type == "massMarkerLayer") {
 						return "bdl.geodash.MassMarkerLayer";
 					}
-					if(type=="areaLayer"){
+					if (type == "areaLayer") {
 						return "bdl.geodash.AreaLayer";
 					}
-					if(type=="kmlLayer"){
+					if (type == "kmlLayer") {
 						return "bdl.geodash.KMLLayer";
 					}
-					if(type=="vectorLayer"){
+					if (type == "vectorLayer") {
 						return "bdl.geodash.VectorLayer";
 					}
-					if(type=="heatMapLayer"){
-						return "bdl.geodash.HeatMapLayer";
+					if (type == "heatMapLayer" || type == "heatmapLayer") {
+						return "bdl.geodash.HeatmapLayer";
 					}
-					if(type=="hurricaneLayer"){
+					if (type == "hurricaneLayer") {
 						return "bdl.geodash.HurricaneLayer";
 					}
-					if(type=="dssLayer:earthquake"){
+					if (type == "dssLayer:earthquake") {
 						return "bdl.geodash.DssLayer";
 					}
 				};
 				var layers = json.layers;
 				if (layers && layers.length && layers.length > 0) {
 					for ( var i in layers) {
-						var geoDashLayer;
-						var ex = "geoDashLayer = new " + getScriptClass(layers[i].type) + "(" + JSON.stringify(layers[i]) + ");";
+						var scriptClass = getScriptClass(layers[i].type);
+						var ex = "var geoDashLayer = new " + scriptClass + "(" + JSON.stringify(layers[i]) + ");";
 						eval(ex);
 						gd.layers.add(geoDashLayer);
 					}
@@ -519,7 +551,7 @@ var visName = "Geodash3Vis";
 				mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
 					success : renderColumns,
 					failure : function() {
-						alert("An error ocurred");
+						alert("An error occurred");
 					}
 				}, taskInfo);
 
@@ -533,7 +565,7 @@ var visName = "Geodash3Vis";
 				mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
 					success : renderLayers,
 					failure : function() {
-						alert("An error ocurred");
+						alert("An error occurred");
 					}
 				}, taskInfo);
 			};
@@ -542,7 +574,7 @@ var visName = "Geodash3Vis";
 			mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
 				success : renderGeodash,
 				failure : function() {
-					alert("An error ocurred");
+					alert("An error occurred");
 				}
 			}, {
 				taskId : "geodash3GetSettings",
