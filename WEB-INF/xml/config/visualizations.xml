@@ -7,6 +7,6 @@
 		<visualization id="Geodash3" desc="Geodash3" scope="11" style-name="Geodash3MojoVisualizationStyle" />
 	</visualization-list>
 	<visualization-list name="ipad" view-mode="71">
-		<visualization id="Geodash3" desc="Geodash3" scope="3" style-name="Geodash3MojoVisualizationStyle" />
+		<visualization id="Geodash2" desc="Geodash3" scope="3" style-name="Geodash3MojoVisualizationStyle" />
 	</visualization-list>
 </visualizations>
