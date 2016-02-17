@@ -115,7 +115,6 @@
 			});
 		},
 		getEventForSelection : function(elementID, sc) {
-			debugger;
 			var m = this.getData();
 			var result = {
 				ck : sc.ck,
@@ -473,7 +472,7 @@ var visName = "Geodash3Vis";
 						return "bdl.geodash.AreaLayer";
 					}
 					if (type == "kmlLayer") {
-						return "bdl.geodash.KMLLayer";
+						return "bdl.geodash.KmlLayer";
 					}
 					if (type == "vectorLayer") {
 						return "bdl.geodash.VectorLayer";
