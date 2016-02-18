@@ -178,10 +178,8 @@ var visName = "Geodash3Vis";
 		 * markupString is a structure of a div to create as a placeholder for charts id is important since will be passed in to Google code as reference to div to append results
 		 */
 		// markupString : '<div id="GeoDash3Vis_{@id}"></div>',
-		//markupString : '<div id="geodash" style="z-index:50;"></div>',
-        markupString: '<div class="custom-vis-layout {@cssClass}" style="position:absolute;left:{@left}px;top:{@top}px;overflow:hidden;width:{@width}px;height:{@height}px;z-index:{@zIndex};{@viewportCssText}">' +
-        '<div id="geodash" style="z-index:{@zIndex};"></div>' +
-        '</div>',
+		// markupString : '<div id="geodash" style="z-index:50;"></div>',
+		markupString : '<div class="custom-vis-layout {@cssClass}" style="position:absolute;left:{@left}px;top:{@top}px;overflow:hidden;width:{@width}px;height:{@height}px;z-index:{@zIndex};{@viewportCssText}">' + '<div id="geodash" style="width:{@width}px;height:{@height}px;z-index:{@zIndex};"></div>' + '</div>',
 		/**
 		 * code is ready lets prepare data
 		 */
@@ -190,44 +188,43 @@ var visName = "Geodash3Vis";
 				this._super();
 			}
 			if (typeof (gd) != 'undefined') {
-				if (this.domNode.childNodes.length == 0) {
-					var parent = this.domNode.parentNode;
-					parent.removeChild(this.domNode);
+				if (this.domNode.childNodes.length > 0 && this.domNode.childNodes[0].childNodes.length == 0) { // Document
+					var parent = this.domNode;
+					parent.removeChild(this.domNode.firstChild);
 					parent.appendChild(gd.el);
 					gd.el.style.width = this.width + "px";
 					gd.el.style.height = this.height + "px";
-					this.domNode = gd.el;
-					gd.resize();
-					// We need to make sure the layer exist in the visualizations
-					var verifyLayers = function(json) {
-						var layers = json.layers
-						if (typeof (layers) == 'undefined' || (layers && layers.length == 0)) {
-							var currentLayers = gd.layers.models;
-							for (i = 0; i < currentLayers.length; i++) {
-								var action = bdl.geodash.MSTR.saveModel({
-									model : currentLayers[i],
-									success : null,
-									error : null
-								});
-							}
+				}
+				gd.resize();
+				// We need to make sure the layer exist in the visualizations
+				var verifyLayers = function(json) {
+					var layers = json.layers
+					if (typeof (layers) == 'undefined' || (layers && layers.length == 0)) {
+						var currentLayers = gd.layers.models;
+						for (i = 0; i < currentLayers.length; i++) {
+							var action = bdl.geodash.MSTR.saveModel({
+								model : currentLayers[i],
+								success : null,
+								error : null
+							});
 						}
 					}
-
-					// layers
-					taskInfo = {
-						taskId : "geodash3GetJson",
-						sessionState : mstrApp.sessionState,
-						messageID : mstrApp.getMsgID(),
-						gridKey : this.k
-					};
-					mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
-						success : verifyLayers,
-						failure : function() {
-							alert("An error ocurred");
-						}
-					}, taskInfo);
-
 				}
+
+				// layers
+				taskInfo = {
+					taskId : "geodash3GetJson",
+					sessionState : mstrApp.sessionState,
+					messageID : mstrApp.getMsgID(),
+					gridKey : this.k
+				};
+				mstrmojo.xhr.request("POST", mstrConfig.taskURL, {
+					success : verifyLayers,
+					failure : function() {
+						alert("An error ocurred");
+					}
+				}, taskInfo);
+
 				return;
 			}
 
@@ -536,7 +533,7 @@ var visName = "Geodash3Vis";
 				};
 
 				window["gd"] = new bdl.geodash.GD(_.extend({
-					el : vis.domNode,
+					el : vis.domNode.firstChild,
 				}, base));
 
 				// columns
