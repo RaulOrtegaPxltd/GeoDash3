@@ -107,7 +107,6 @@
 			return attElementID == this.idSelected;
 		},
 		submitEvents : function(events) {
-			debugger;
 			this.model.controller.model.slice({
 				bufferedSlices : true,
 				tks : (mstrmojo.hash.any(events) || {}).tks,
@@ -174,6 +173,13 @@ var visName = "Geodash3Vis";
 		scriptClass : 'mstrmojo.plugins.' + vis3rdPartyFramework + '.' + visName,
 		model : null,
 		skipReRender : true,
+		draggable: true,
+		isDragValid: function isDragValid() {
+		    return false;
+		},
+		shouldDragBubble: function shouldDragBubble() {
+		    return true;
+		},
 		/**
 		 * markupString is a structure of a div to create as a placeholder for charts id is important since will be passed in to Google code as reference to div to append results
 		 */
