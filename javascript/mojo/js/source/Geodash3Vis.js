@@ -128,10 +128,11 @@
 			return result;
 		},
 		getElementID : function(warehouseID) {
-			var element = this.getData().gts.row[0].es.filter(function(val, index, array) {
+			var data = this.getData();
+			var element = data.gts.row[0].es.filter(function(val, index, array) {
 				return val.n === warehouseID;
 			});
-			return element && element[0].id;
+			return element && element.lenght >0 ? element[0].id : null;
 		},
 		getSC : function() {
 			return this.getData().gts.row[0].sc;
