@@ -132,7 +132,7 @@
 			var element = data.gts.row[0].es.filter(function(val, index, array) {
 				return val.n === warehouseID;
 			});
-			return element && element.lenght >0 ? element[0].id : null;
+			return element && element.length >0 ? element[0].id : null;
 		},
 		getSC : function() {
 			return this.getData().gts.row[0].sc;
